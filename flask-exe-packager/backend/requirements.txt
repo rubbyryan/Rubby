@@ -1,0 +1,8 @@
+Flask==2.0.3
+librosa==0.8.1
+numpy==1.21.2
+joblib==1.0.1
+pydub==0.25.1
+flask-cors==3.0.10
+soundfile==0.10.3
+scipy==1.7.1

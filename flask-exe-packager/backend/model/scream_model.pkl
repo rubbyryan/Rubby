@@ -1,0 +1,3 @@
+from joblib import dump
+# Assuming 'model' is your trained model
+dump(model, 'path_to_your_model/scream_model.pkl')

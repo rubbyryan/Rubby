@@ -1,0 +1,22 @@
+Scream Detection Model Performance Report
+
+Dataset size: 3128 samples (1545 Non-Scream, 1583 Scream)
+
+Accuracy: 0.93
+Precision: 0.91
+Recall: 0.89
+F1 Score: 0.90
+
+Confusion Matrix:
+[[1430  115]
+ [ 174 1409]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+   Non-Scream       0.89      0.93      0.91      1545
+       Scream       0.92      0.89      0.90      1583
+
+    accuracy                           0.93      3128
+   macro avg       0.91      0.91      0.91      3128
+weighted avg       0.91      0.93      0.91      3128

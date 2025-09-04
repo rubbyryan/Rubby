@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scream Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            color: #fff;
+            font-family: 'Montserrat', Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            padding: 40px 30px 30px 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .custom-file-upload {
+            border: 2px solid #ff4e50;
+            display: inline-block;
+            padding: 10px 25px;
+            cursor: pointer;
+            border-radius: 8px;
+            background: #232526;
+            color: #ff4e50;
+            font-weight: 600;
+            margin-bottom: 18px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .custom-file-upload:hover {
+            background: #ff4e50;
+            color: #fff;
+        }
+        button {
+            background: linear-gradient(90deg, #ff4e50 0%, #f9d423 100%);
+            color: #232526;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 32px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #f9d423 0%, #ff4e50 100%);
+            color: #fff;
+        }
+        #result {
+            margin-top: 25px;
+            font-size: 1.1rem;
+            padding: 18px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            min-height: 40px;
+            transition: background 0.2s;
+        }
+        .scream {
+            color: #ff4e50;
+            font-weight: bold;
+        }
+        .no-scream {
+            color: #f9d423;
+            font-weight: bold;
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 25px 10px 20px 10px;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Scream Detection</h1>
+        <label class="custom-file-upload">
+            <input type="file" id="audioFile" accept="audio/*">
+            Choose Audio File
+        </label>
+        <div id="fileName" style="margin-bottom:10px; color:#f9d423;"></div>
+        <button onclick="detectScream()">Detect Scream</button>
+        <div id="result"></div>
+    </div>
+    <script>
+        // Show selected file name
+        document.getElementById('audioFile').addEventListener('change', function() {
+            const fileName = this.files.length ? this.files[0].name : '';
+            document.getElementById('fileName').textContent = fileName;
+        });
+
+        function detectScream() {
+            const fileInput = document.getElementById('audioFile');
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            if (!fileInput.files.length) {
+                resultDiv.innerHTML = '<span style="color:#ff4e50;">Please select an audio file.</span>';
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            resultDiv.innerHTML = 'Detecting... <span style="font-size:1.2em;">🔎</span>';
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    resultDiv.innerHTML = '<span style="color:#ff4e50;">Error: ' + data.error + '</span>';
+                } else {
+                    resultDiv.innerHTML =
+                        (data.is_scream
+                            ? '<span class="scream">Scream Detected! 😱</span>'
+                            : '<span class="no-scream">No Scream Detected. 🙂</span>')
+                        + '<br>Probability: <b>' + (data.probability * 100).toFixed(2) + '%</b>';
+                }
+            })
+            .catch(error => {
+                resultDiv.innerHTML = '<span style="color:#ff4e50;">Error: ' + error + '</span>';
+            });
+        }
+    </script>
+</body>
+</html>
